@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
+    <width>784</width>
     <height>630</height>
    </rect>
   </property>
@@ -18,14 +18,20 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
-      <width>181</width>
-      <height>171</height>
+      <y>250</y>
+      <width>221</width>
+      <height>241</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="pushButton_2">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>最小化</string>
        </property>
@@ -33,6 +39,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_3">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>最大化</string>
        </property>
@@ -40,13 +52,38 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>退出</string>
        </property>
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>浏览</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton_4">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>测试</string>
        </property>
@@ -54,28 +91,144 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>180</y>
-      <width>721</width>
-      <height>401</height>
+      <x>0</x>
+      <y>0</y>
+      <width>781</width>
+      <height>81</height>
      </rect>
     </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>说明：金属腐蚀支持的检测有两类（1）缝隙腐蚀（2）点蚀</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>使用方法：点击测试按钮，浏览并选取文件后等待检测结果</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>-1</x>
+      <y>79</y>
+      <width>781</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>文件路径：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>190</y>
+      <width>781</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="value">
+        <number>20</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_3">
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>0</y>
-      <width>451</width>
-      <height>41</height>
+      <y>250</y>
+      <width>551</width>
+      <height>51</height>
      </rect>
     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>花费时间</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_2">
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -83,7 +236,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>840</width>
+     <width>784</width>
      <height>23</height>
     </rect>
    </property>
@@ -99,8 +252,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>256</y>
+     <x>152</x>
+     <y>405</y>
     </hint>
     <hint type="destinationlabel">
      <x>647</x>
@@ -115,8 +268,8 @@
    <slot>showMinimized()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>369</x>
-     <y>177</y>
+     <x>141</x>
+     <y>313</y>
     </hint>
     <hint type="destinationlabel">
      <x>649</x>
@@ -131,8 +284,8 @@
    <slot>showMaximized()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>349</x>
-     <y>214</y>
+     <x>121</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
      <x>647</x>
@@ -141,23 +294,40 @@
    </hints>
   </connection>
   <connection>
+   <sender>pushButton_5</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>view()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>465</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>463</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>pushButton_4</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>show_img()</slot>
+   <slot>test()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>387</x>
-     <y>298</y>
+     <x>150</x>
+     <y>516</y>
     </hint>
     <hint type="destinationlabel">
-     <x>492</x>
-     <y>301</y>
+     <x>316</x>
+     <y>518</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
-  <slot>show_img()</slot>
+  <slot>view()</slot>
+  <slot>test()</slot>
  </slots>
 </ui>

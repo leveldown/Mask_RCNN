@@ -58,6 +58,9 @@ def extract_bboxes(mask):
 
 def compute_iou(box, boxes, box_area, boxes_area):
     """Calculates IoU of the given box with the array of the given boxes.
+
+    计算给定的box与一组boxs的iou
+
     box: 1D vector [y1, x1, y2, x2]
     boxes: [boxes_count, (y1, x1, y2, x2)]
     box_area: float. the area of 'box'
@@ -71,10 +74,10 @@ def compute_iou(box, boxes, box_area, boxes_area):
     y2 = np.minimum(box[2], boxes[:, 2])
     x1 = np.maximum(box[1], boxes[:, 1])
     x2 = np.minimum(box[3], boxes[:, 3])
-    intersection = np.maximum(x2 - x1, 0) * np.maximum(y2 - y1, 0)
-    union = box_area + boxes_area[:] - intersection[:]
+    intersection = np.maximum(x2 - x1, 0) * np.maximum(y2 - y1, 0)  # 求交集
+    union = box_area + boxes_area[:] - intersection[:]  # 求并集
     iou = intersection / union
-    return iou
+    return iou  # 计算iou
 
 
 def compute_overlaps(boxes1, boxes2):
@@ -120,6 +123,9 @@ def compute_overlaps_masks(masks1, masks2):
 
 def non_max_suppression(boxes, scores, threshold):
     """Performs non-maximum suppression and returns indices of kept boxes.
+
+    非最大值抑制
+
     boxes: [N, (y1, x1, y2, x2)]. Notice that (y2, x2) lays outside the box.
     scores: 1-D array of box scores.
     threshold: Float. IoU threshold to use for filtering.
@@ -181,6 +187,9 @@ def apply_box_deltas(boxes, deltas):
 
 def box_refinement_graph(box, gt_box):
     """Compute refinement needed to transform box to gt_box.
+
+    计算box与gt_box的偏移量
+
     box and gt_box are [N, (y1, x1, y2, x2)]
     """
     box = tf.cast(box, tf.float32)
@@ -588,6 +597,7 @@ def generate_anchors(scales, ratios, shape, feature_stride, anchor_stride):
     feature_stride: Stride of the feature map relative to the image in pixels.
     anchor_stride: Stride of anchors on the feature map. For example, if the
         value is 2 then generate anchors for every other feature map pixel.
+        生成anchor
     """
     # Get all combinations of scales and ratios
     scales, ratios = np.meshgrid(np.array(scales), np.array(ratios))
@@ -628,6 +638,7 @@ def generate_pyramid_anchors(scales, ratios, feature_shapes, feature_strides,
     anchors: [N, (y1, x1, y2, x2)]. All generated anchors in one array. Sorted
         with the same order of the given scales. So, anchors of scale[0] come
         first, then anchors of scale[1], and so on.
+        所有anchor放入一个数组，按anchor大小排序
     """
     # Anchors
     # [anchor_count, (y1, x1, y2, x2)]
@@ -721,6 +732,7 @@ def compute_ap(gt_boxes, gt_class_ids, gt_masks,
     precisions: List of precisions at different class score thresholds.
     recalls: List of recall values at different class score thresholds.
     overlaps: [pred_boxes, gt_boxes] IoU overlaps.
+    计算AP值
     """
     # Get matches and overlaps
     gt_match, pred_match, overlaps = compute_matches(
@@ -780,6 +792,9 @@ def compute_recall(pred_boxes, gt_boxes, iou):
 
     pred_boxes: [N, (y1, x1, y2, x2)] in image coordinates
     gt_boxes: [N, (y1, x1, y2, x2)] in image coordinates
+
+    计算召回率
+
     """
     # Measure overlaps
     overlaps = compute_overlaps(pred_boxes, gt_boxes)
@@ -839,6 +854,8 @@ def batch_slice(inputs, graph_fn, batch_size, names=None):
 def download_trained_weights(coco_model_path, verbose=1):
     """Download COCO trained weights from Releases.
 
+    下载训练权重
+
     coco_model_path: local path of COCO trained weights
     """
     if verbose > 0:
@@ -854,6 +871,8 @@ def norm_boxes(boxes, shape):
     boxes: [N, (y1, x1, y2, x2)] in pixel coordinates
     shape: [..., (height, width)] in pixels
 
+    将像素坐标转换为标准坐标
+
     Note: In pixel coordinates (y2, x2) is outside the box. But in normalized
     coordinates it's inside the box.
 
@@ -863,13 +882,15 @@ def norm_boxes(boxes, shape):
     h, w = shape
     scale = np.array([h - 1, w - 1, h - 1, w - 1])
     shift = np.array([0, 0, 1, 1])
-    return np.divide((boxes - shift), scale).astype(np.float32)
+    return np.divide((boxes - shift), scale).astype(np.float32)  # divide除法
 
 
 def denorm_boxes(boxes, shape):
     """Converts boxes from normalized coordinates to pixel coordinates.
     boxes: [N, (y1, x1, y2, x2)] in normalized coordinates
     shape: [..., (height, width)] in pixels
+
+    将标准坐标转换为像素坐标
 
     Note: In pixel coordinates (y2, x2) is outside the box. But in normalized
     coordinates it's inside the box.
@@ -886,6 +907,8 @@ def denorm_boxes(boxes, shape):
 def resize(image, output_shape, order=1, mode='constant', cval=0, clip=True,
            preserve_range=False, anti_aliasing=False, anti_aliasing_sigma=None):
     """A wrapper for Scikit-Image resize().
+
+    解决不同版本skimage下的resize（）问题
 
     Scikit-Image generates warnings on every call to resize() if it doesn't
     receive the right parameters. The right parameters depend on the version

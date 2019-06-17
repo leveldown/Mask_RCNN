@@ -9,6 +9,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 from mrcnn import utils
 import mrcnn.model as modellib
+from keras.backend import clear_session
+
 from mrcnn import visualize
 from samples.coco import coco
 from mrcnn.config import Config
@@ -23,8 +25,8 @@ sys.path.append(os.path.join(ROOT_DIR, "samples/coco/"))  # 路径拼接，添�
 
 
 # Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "logs/shapes20190420T2337")  # 设置写logs的目录以及保存训练model的目录
-
+MODEL_DIR = os.path.join(ROOT_DIR, "logs/shapes20190427T0104")  # 设置写logs的目录以及保存训练model的目录
+# shapes20190427T0104,shapes20190420T2337
 # Local path to trained weights file
 COCO_MODEL_PATH = os.path.join(MODEL_DIR, "mask_rcnn_shapes_0002.h5")
 # Download COCO trained weights from Releases if needed
@@ -81,6 +83,7 @@ def detection(img_dir):
     config = InferenceConfig()
 
     # Create model object in inference mode.
+    clear_session()
     model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
 
     # Load weights trained on MS-COCO

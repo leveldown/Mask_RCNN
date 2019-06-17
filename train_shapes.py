@@ -98,10 +98,10 @@ class ShapesConfig(Config):
     TRAIN_ROIS_PER_IMAGE = 32
 
     # Use a small epoch since the data is simple
-    STEPS_PER_EPOCH = 100
+    STEPS_PER_EPOCH = 1000
 
     # use small validation steps since the epoch is small
-    VALIDATION_STEPS = 5
+    VALIDATION_STEPS = 50
 
 
 config = ShapesConfig()
@@ -179,7 +179,7 @@ class ErosionDataset(utils.Dataset):
         for i in range(count):
             filestr = imglist[i].split(".")[0]
             filestr = filestr.split("_")[1]
-            mask_path = mask_floder + "/rgb_" + filestr + "_json_label" ".png"
+            mask_path = mask_floder + "/rgb_" + filestr + "_json_label.png"
             yaml_path = dataset_root_path + "labelme_json/rgb_" + filestr + "_json/info.yaml"
             self.add_image("shapes", image_id=i, path=img_floder + "/" + imglist[i],
                            width=width, height=height, mask_path=mask_path, yaml_path=yaml_path)

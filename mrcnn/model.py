@@ -38,6 +38,9 @@ assert LooseVersion(keras.__version__) >= LooseVersion('2.0.8')
 def log(text, array=None):
     """Prints a text message. And, optionally, if a Numpy array is provided it
     prints it's shape, min, and max values.
+
+    打印数组的大小，最大和最小值
+
     """
     if array is not None:
         text = text.ljust(25)
@@ -214,6 +217,9 @@ def apply_box_deltas_graph(boxes, deltas):
     """Applies the given deltas to the given boxes.
     boxes: [N, (y1, x1, y2, x2)] boxes to update
     deltas: [N, (dy, dx, log(dh), log(dw))] refinements to apply
+
+    对box进行平移和放缩变换
+
     """
     # Convert to y, x, h, w
     height = boxes[:, 2] - boxes[:, 0]
@@ -238,6 +244,9 @@ def clip_boxes_graph(boxes, window):
     """
     boxes: [N, (y1, x1, y2, x2)]
     window: [4] in the form y1, x1, y2, x2
+
+    分割
+
     """
     # Split
     wy1, wx1, wy2, wx2 = tf.split(window, 4)
@@ -259,8 +268,8 @@ class ProposalLayer(KE.Layer):
     box refinement deltas to anchors.
 
     Inputs:
-        rpn_probs: [batch, num_anchors, (bg prob, fg prob)]
-        rpn_bbox: [batch, num_anchors, (dy, dx, log(dh), log(dw))]
+        rpn_probs: [batch, num_anchors, (bg prob, fg prob)]（from RPN）
+        rpn_bbox: [batch, num_anchors, (dy, dx, log(dh), log(dw))](from RPN)
         anchors: [batch, num_anchors, (y1, x1, y2, x2)] anchors in normalized coordinates
 
     Returns:
@@ -274,7 +283,7 @@ class ProposalLayer(KE.Layer):
         self.nms_threshold = nms_threshold
 
     def call(self, inputs):
-        # Box Scores. Use the foreground class confidence. [Batch, num_rois, 1]
+        # Box Scores. Use the foreground class confidence（前景置信度）. [Batch, num_rois, 1]
         scores = inputs[0][:, :, 1]
         # Box deltas [batch, num_rois, 4]
         deltas = inputs[1]
@@ -282,7 +291,7 @@ class ProposalLayer(KE.Layer):
         # Anchors
         anchors = inputs[2]
 
-        # Improve performance by trimming to top anchors by score
+        # Improve performance by trimming to top anchors by score（通过取分数top n的anchor提高性能）
         # and doing the rest on the smaller subset.
         pre_nms_limit = tf.minimum(self.config.PRE_NMS_LIMIT, tf.shape(anchors)[1])
         ix = tf.nn.top_k(scores, pre_nms_limit, sorted=True,
@@ -295,7 +304,7 @@ class ProposalLayer(KE.Layer):
                                     self.config.IMAGES_PER_GPU,
                                     names=["pre_nms_anchors"])
 
-        # Apply deltas to anchors to get refined anchors.
+        # Apply deltas to anchors to get refined anchors.（对anchor使用deltas得到修正的anchor）
         # [batch, N, (y1, x1, y2, x2)]
         boxes = utils.batch_slice([pre_nms_anchors, deltas],
                                   lambda x, y: apply_box_deltas_graph(x, y),
@@ -313,8 +322,9 @@ class ProposalLayer(KE.Layer):
         # Filter out small boxes
         # According to Xinlei Chen's paper, this reduces detection accuracy
         # for small objects, so we're skipping it.
+        # 滤除小边框，但这可能减小对小物体检测的准确度，所以我们跳过它
 
-        # Non-max suppression
+        # Non-max suppression（非最大值抑制）
         def nms(boxes, scores):
             indices = tf.image.non_max_suppression(
                 boxes, scores, self.proposal_count,
@@ -627,19 +637,37 @@ class DetectionTargetLayer(KE.Layer):
     proposals: [batch, N, (y1, x1, y2, x2)] in normalized coordinates. Might
                be zero padded if there are not enough proposals.
     gt_class_ids: [batch, MAX_GT_INSTANCES] Integer class IDs.
-    gt_boxes: [batch, MAX_GT_INSTANCES, (y1, x1, y2, x2)] in normalized
-              coordinates.
+
+    数据集读取类别（训练）/分类好的类别
+
+    gt_boxes: [batch, MAX_GT_INSTANCES, (y1, x1, y2, x2)] in normalized coordinates.
+
+    数据集读取box（训练）/分类好的box
+
     gt_masks: [batch, height, width, MAX_GT_INSTANCES] of boolean type
+
+    数据集读取mask（训练）/分类好的mask
 
     Returns: Target ROIs and corresponding class IDs, bounding box shifts,
     and masks.
     rois: [batch, TRAIN_ROIS_PER_IMAGE, (y1, x1, y2, x2)] in normalized
           coordinates
+
+    用于训练的rois
+
     target_class_ids: [batch, TRAIN_ROIS_PER_IMAGE]. Integer class IDs.
+
+    整数形式的id
+
     target_deltas: [batch, TRAIN_ROIS_PER_IMAGE, (dy, dx, log(dh), log(dw)]
+
+    目标box的偏移量
+
     target_mask: [batch, TRAIN_ROIS_PER_IMAGE, height, width]
                  Masks cropped to bbox boundaries and resized to neural
                  network output size.
+
+    目标box的mask
 
     Note: Returned arrays might be zero padded if not enough target ROIs.
     """
@@ -692,6 +720,8 @@ def refine_detections_graph(rois, probs, deltas, window, config):
                 bounding box deltas.
         window: (y1, x1, y2, x2) in normalized coordinates. The part of the image
             that contains the image excluding the padding.
+
+        detectionlayer的主要函数
 
     Returns detections shaped: [num_detections, (y1, x1, y2, x2, class_id, score)] where
         coordinates are normalized.
@@ -837,9 +867,11 @@ def rpn_graph(feature_map, anchors_per_location, anchor_stride):
 
     Returns:
         rpn_class_logits: [batch, H * W * anchors_per_location, 2] Anchor classifier logits (before softmax)
-        rpn_probs: [batch, H * W * anchors_per_location, 2] Anchor classifier probabilities.
+        rpn_probs: [batch, H * W * anchors_per_location, 2] Anchor classifier probabilities.（after softmax）
+        anchor前后景score
         rpn_bbox: [batch, H * W * anchors_per_location, (dy, dx, log(dh), log(dw))] Deltas to be
                   applied to anchors.
+        anchor位置偏移量
     """
     # TODO: check if stride of 2 causes alignment issues if the feature map
     # is not even.
@@ -915,7 +947,13 @@ def fpn_classifier_graph(rois, feature_maps, image_meta,
 
     Returns:
         logits: [batch, num_rois, NUM_CLASSES] classifier logits (before softmax)
-        probs: [batch, num_rois, NUM_CLASSES] classifier probabilities
+
+        rois对应类别的概率（经过softmax前）
+
+        probs: [batch, num_rois, NUM_CLASSES] classifier probabilities(after softmax)
+
+        rois对应类别的概率（经过softmax后）
+
         bbox_deltas: [batch, num_rois, NUM_CLASSES, (dy, dx, log(dh), log(dw))] Deltas to apply to
                      proposal boxes
     """
@@ -967,6 +1005,9 @@ def build_fpn_mask_graph(rois, feature_maps, image_meta,
     train_bn: Boolean. Train or freeze Batch Norm layers
 
     Returns: Masks [batch, num_rois, MASK_POOL_SIZE, MASK_POOL_SIZE, NUM_CLASSES]
+
+    返回mask
+
     """
     # ROI Pooling
     # Shape: [batch, num_rois, MASK_POOL_SIZE, MASK_POOL_SIZE, channels]
@@ -1445,6 +1486,8 @@ def build_detection_targets(rpn_rois, gt_class_ids, gt_boxes, gt_masks, config):
 def build_rpn_targets(image_shape, anchors, gt_class_ids, gt_boxes, config):
     """Given the anchors and GT boxes, compute overlaps and identify positive
     anchors and deltas to refine them to match their corresponding GT boxes.
+
+    通过anchors和GTboxes获得anchor类型（正负样本）和bbox（正样本和gt_box偏移量）
 
     anchors: [num_anchors, (y1, x1, y2, x2)]
     gt_class_ids: [num_gt_boxes] Integer class IDs.
